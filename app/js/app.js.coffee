@@ -17,6 +17,9 @@ class window.Artpad
     @$page.mouseup =>
       @trying_to_draw = false
 
+    @$page.mouseleave =>
+      @trying_to_draw = false
+
 
   draw_line: ->
     path = @page.path("M#{@from.x} #{@from.y}l0 0" + "L#{@to.x} #{@to.y}")
@@ -33,4 +36,4 @@ artpad_page        = document.getElementById 'artpad_page'
 artpad_page.height = $('#artpad').height()
 artpad_page.width  = $('#artpad').width()
 
-window.artpad = new Artpad(artpad_page)
+new Artpad(artpad_page)
