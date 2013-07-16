@@ -13,32 +13,26 @@ class window.Artpad
       @from =
         x: e.offsetX
         y: e.offsetY
-        path: ->
+        path_string: ->
           "M#{@x} #{@y}l0 0"
-
-      @pathString = @from.path()
-      @path = @page.path(@pathString);
-
-      @lastX = @from.x
-      @lastY = @from.y
 
     @$page.mouseup =>
       @mouse_is_down = false
 
     @$page.mousemove (e)=>
       if @mouse_is_down
-
         @to =
           x: e.offsetX
           y: e.offsetY
-          path: (lastX, lastY)->
-            'l' + (@x - lastX) + ' ' + (@y - lastY)
+          path_string: (from_x, from_y)->
+            'l' + (@x - from_x) + ' ' + (@y - from_y)
 
-        @pathString += @to.path(@lastX, @lastY)
-        @path.attr('path', @pathString);
+        @draw_line()
 
-        @lastX = @to.x
-        @lastY = @to.y
+  draw_line: ->
+    @page.path(@from.path_string() + @to.path_string(@from.x, @from.y))
+    @from.x = @to.x
+    @from.y = @to.y
 
 
 
