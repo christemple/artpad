@@ -10,26 +10,35 @@ class window.Artpad
     @$page.mousedown (e)=>
       @mouse_is_down = true
 
-      x = e.offsetX
-      y = e.offsetY
-      @pathString = 'M' + x + ' ' + y + 'l0 0';
+      @from =
+        x: e.offsetX
+        y: e.offsetY
+        path: ->
+          "M#{@x} #{@y}l0 0"
+
+      @pathString = @from.path()
       @path = @page.path(@pathString);
 
-      @lastX = x
-      @lastY = y
+      @lastX = @from.x
+      @lastY = @from.y
 
     @$page.mouseup =>
       @mouse_is_down = false
 
     @$page.mousemove (e)=>
       if @mouse_is_down
-        x = e.offsetX
-        y = e.offsetY
-        @pathString += 'l' + (x - @lastX) + ' ' + (y - @lastY);
+
+        @to =
+          x: e.offsetX
+          y: e.offsetY
+          path: (lastX, lastY)->
+            'l' + (@x - lastX) + ' ' + (@y - lastY)
+
+        @pathString += @to.path(@lastX, @lastY)
         @path.attr('path', @pathString);
 
-        @lastX = x
-        @lastY = y
+        @lastX = @to.x
+        @lastY = @to.y
 
 
 
