@@ -6,4 +6,7 @@ $ ->
     artpad_page.height = artpad.height()
     artpad_page.width  = artpad.width()
 
+  $(window).resize ->
+    resize_artpad_page()
+
   resize_artpad_page()
