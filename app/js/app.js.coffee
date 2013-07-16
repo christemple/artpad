@@ -3,34 +3,28 @@ class window.Artpad
   constructor: (page)->
     @page = new Raphael(page, page.width, page.height)
     @$page = $(page)
-    @trying_to_draw = false
     @bindEvents()
 
   bindEvents: ->
     @$page.mousedown (e)=>
       @trying_to_draw = true
-      @from =
-        x: e.offsetX
-        y: e.offsetY
-        path_string: ->
-          "M#{@x} #{@y}l0 0"
+      @from = @get_artists_pencil_location(e)
+
+    @$page.mousemove (e)=>
+      @to = @get_artists_pencil_location(e)
+      @draw_line() if @trying_to_draw
 
     @$page.mouseup =>
       @trying_to_draw = false
 
-    @$page.mousemove (e)=>
-      @to =
-        x: e.offsetX
-        y: e.offsetY
-        path_string: (from_x, from_y)->
-          'l' + (@x - from_x) + ' ' + (@y - from_y)
-
-      @draw_line() if @trying_to_draw
 
   draw_line: ->
-    @page.path(@from.path_string() + @to.path_string(@from.x, @from.y))
+    @page.path("M#{@from.x} #{@from.y}l0 0" + "L#{@to.x} #{@to.y}")
     @from.x = @to.x
     @from.y = @to.y
+
+  get_artists_pencil_location: (e)->
+    { x: e.offsetX, y: e.offsetY }
 
 
 
