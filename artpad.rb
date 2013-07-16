@@ -12,7 +12,7 @@ end
 register Sinatra::AssetPack
 assets {
   css :app, ['/css/*.css']
-  js :app, ['/js/*.js']
+  js :app, ['/js/raphael.js', '/js/*.js']
 }
 
 get '/' do
