@@ -19,7 +19,8 @@ class window.Artpad
 
 
   draw_line: ->
-    @page.path("M#{@from.x} #{@from.y}l0 0" + "L#{@to.x} #{@to.y}")
+    path = @page.path("M#{@from.x} #{@from.y}l0 0" + "L#{@to.x} #{@to.y}")
+    path.attr('stroke-width': 3)
     @from.x = @to.x
     @from.y = @to.y
 
