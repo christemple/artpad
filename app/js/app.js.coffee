@@ -13,6 +13,7 @@ class window.Artpad
     @$page.mousemove (e)=>
       @to = @get_artists_pencil_location(e)
       @draw_line() if @trying_to_draw
+      @from = @to
 
     @$page.mouseup =>
       @trying_to_draw = false
@@ -23,8 +24,6 @@ class window.Artpad
 
   draw_line: ->
     @page.path("M#{@from.x} #{@from.y}l0 0" + "L#{@to.x} #{@to.y}").attr('stroke-width': 3)
-    @from.x = @to.x
-    @from.y = @to.y
 
   get_artists_pencil_location: (e)->
     { x: e.offsetX, y: e.offsetY }
