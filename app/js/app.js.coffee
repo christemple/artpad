@@ -4,6 +4,7 @@ class window.Artpad
     @page = new Raphael(page, page.width, page.height)
     @$page = $(page)
     @bindEvents()
+    @load_drawing()
 
   bindEvents: ->
     @$page.mousedown (e)=>
@@ -17,10 +18,10 @@ class window.Artpad
 
     @$page.mouseup =>
       @trying_to_draw = false
+      @save_drawing()
 
     @$page.mouseleave =>
       @trying_to_draw = false
-
 
   draw_line: ->
     @page.path("M#{@from.x} #{@from.y}l0 0" + "L#{@to.x} #{@to.y}").attr('stroke-width': 3)
@@ -28,6 +29,13 @@ class window.Artpad
   get_artists_pencil_location: (e)->
     { x: e.offsetX, y: e.offsetY }
 
+  load_drawing: ->
+    $.get '/json', (json)=>
+      @page.fromJSON(json)
+
+  save_drawing: ->
+    $.post '/',
+      data: @page.toJSON()
 
 
 artpad_page        = document.getElementById 'artpad_page'
