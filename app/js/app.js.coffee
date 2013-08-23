@@ -30,11 +30,11 @@ class window.Artpad
     { x: e.offsetX, y: e.offsetY }
 
   load_drawing: ->
-    $.get '/json', (json)=>
+    $.get "#{window.location.pathname}/json", (json)=>
       @page.fromJSON(json)
 
   save_drawing: ->
-    $.post '/',
+    $.post window.location.pathname,
       data: @page.toJSON()
 
 

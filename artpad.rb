@@ -5,20 +5,11 @@ require 'thin'
 require 'helpers'
 require 'mongo'
 require 'json'
+require 'securerandom'
 
 configure do
   set :port, 3000
   set :root, File.dirname("../")
-end
-
-include Mongo
-
-def drawings
-  return @db_connection.collection('drawings') if @db_connection
-  db = URI.parse('http://localhost:27017')
-  @db_connection = Mongo::MongoClient.new(db.host, db.port).db('artpad')
-  @db_connection.authenticate('user', 'password')
-  @db_connection.collection('drawings')
 end
 
 register Sinatra::AssetPack
@@ -27,15 +18,29 @@ assets {
   js :app, ['/js/raphael*.js', '/js/*.js']
 }
 
+include Mongo
+def drawings
+  return @db_connection.collection('drawings') if @db_connection
+  db = URI.parse('http://localhost:27017')
+  @db_connection = Mongo::MongoClient.new(db.host, db.port).db('artpad')
+  @db_connection.authenticate('user', 'password')
+  @db_connection.collection('drawings')
+end
+
 get '/' do
+  redirect "/#{SecureRandom.hex[0..5]}"
+end
+
+get '/:name' do
   erb :index
 end
 
-post '/' do
-  drawings.update({ _id: "test"},{ drawing: params['data']}, { upsert: true })
+post '/:name' do
+  drawings.update({ _id: params[:name]},{ _id: params[:name], drawing: params['data']}, { upsert: true })
 end
 
-get '/json' do
+get '/:name/json' do
   content_type :json
-  drawings.find_one({_id: 'test'})['drawing'].to_json
+  drawing = drawings.find_one({_id: params[:name].to_s})
+  drawing ? drawing['drawing'].to_json : '{}'
 end
