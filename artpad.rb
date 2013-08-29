@@ -10,6 +10,11 @@ require 'securerandom'
 configure do
   set :port, 3000
   set :root, File.dirname("../")
+  set :mongodb, 'http://localhost:27017/artpad'
+end
+
+configure :production do
+  set :mongodb, ENV['MONGOHQ_URL']
 end
 
 register Sinatra::AssetPack
@@ -21,9 +26,10 @@ assets {
 include Mongo
 def drawings
   return @db_connection.collection('drawings') if @db_connection
-  db = URI.parse('http://localhost:27017')
-  @db_connection = Mongo::MongoClient.new(db.host, db.port).db('artpad')
-  @db_connection.authenticate('user', 'password')
+  db = URI.parse(settings.mongodb)
+  db_name = db.path.gsub(/^\//, '')
+  @db_connection = Mongo::MongoClient.new(db.host, db.port).db(db_name)
+  @db_connection.authenticate('user', 'passw0rd')
   @db_connection.collection('drawings')
 end
 
